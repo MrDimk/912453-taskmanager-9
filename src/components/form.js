@@ -1,5 +1,50 @@
-export const getFormLayout = () => `
-<form class="card__form" method="get">
+import {getCardDate, getCardTime} from "./utils";
+
+const getRepeatingDaysLayout = (repeatingDays) => {
+  return repeatingDays
+    .map((day) =>
+      `<input
+        class="visually-hidden card__repeat-day-input"
+        type="checkbox"
+        id="repeat-${Object.keys(day)[0]}-4"
+        name="repeat"
+        value="${Object.keys(day)[0]}"
+        ${Object.values(day) ? `checked` : ``}
+      />
+      <label
+        class="card__repeat-day"
+        for="repeat-${Object.keys(day)[0]}-4">
+        ${Object.keys(day)[0]}
+      </label>`
+    )
+    .join(``);
+};
+
+const getHashTagsLayout = (tagsArray) => {
+  return tagsArray.map((tag) => `
+  <span class="card__hashtag-inner">
+    <input
+      type="hidden"
+      name="hashtag"
+      value="${tag}"
+      class="card__hashtag-hidden-input"
+    />
+    <p class="card__hashtag-name">
+      #${tag}
+    </p>
+    <button type="button" class="card__hashtag-delete">
+      delete
+    </button>
+  </span>`)
+  .join(``);
+};
+
+export const getFormLayout = ({description, dueDate, repeatingDays, tags, color}) =>
+  `
+<article class="card card--edit card--${color} ${
+  Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? `card--repeat` : ``
+}">
+  <form class="card__form" method="get">
   <div class="card__inner">
     <div class="card__control">
       <button type="button" class="card__btn card__btn--archive">
@@ -14,7 +59,7 @@ export const getFormLayout = () => `
     </div>
 
     <div class="card__color-bar">
-      <svg width="100%" height="10">
+      <svg class="card__color-bar-wave" width="100%" height="10">
         <use xlink:href="#wave"></use>
       </svg>
     </div>
@@ -25,7 +70,7 @@ export const getFormLayout = () => `
           class="card__text"
           placeholder="Start typing your text here..."
           name="text"
-        >This is example of new task, you can add picture, set date and time, add tags.</textarea>
+        >${description}</textarea>
       </label>
     </div>
 
@@ -33,105 +78,36 @@ export const getFormLayout = () => `
       <div class="card__details">
         <div class="card__dates">
           <button class="card__date-deadline-toggle" type="button">
-            date: <span class="card__date-status">no</span>
+            date: <span class="card__date-status">yes</span>
           </button>
 
-          <fieldset class="card__date-deadline" disabled>
+          <fieldset class="card__date-deadline">
             <label class="card__input-deadline-wrap">
               <input
                 class="card__date"
                 type="text"
-                placeholder="23 September"
+                placeholder=""
                 name="date"
+                value="${getCardDate(dueDate)} ${getCardTime(dueDate)}"
               />
             </label>
           </fieldset>
 
           <button class="card__repeat-toggle" type="button">
-            repeat:<span class="card__repeat-status">no</span>
+            repeat:<span class="card__repeat-status">yes</span>
           </button>
 
-          <fieldset class="card__repeat-days" disabled>
+          <fieldset class="card__repeat-days">
             <div class="card__repeat-days-inner">
-              <input
-                class="visually-hidden card__repeat-day-input"
-                type="checkbox"
-                id="repeat-mo-1"
-                name="repeat"
-                value="mo"
-              />
-              <label class="card__repeat-day" for="repeat-mo-1"
-                >mo</label
-              >
-              <input
-                class="visually-hidden card__repeat-day-input"
-                type="checkbox"
-                id="repeat-tu-1"
-                name="repeat"
-                value="tu"
-                checked
-              />
-              <label class="card__repeat-day" for="repeat-tu-1"
-                >tu</label
-              >
-              <input
-                class="visually-hidden card__repeat-day-input"
-                type="checkbox"
-                id="repeat-we-1"
-                name="repeat"
-                value="we"
-              />
-              <label class="card__repeat-day" for="repeat-we-1"
-                >we</label
-              >
-              <input
-                class="visually-hidden card__repeat-day-input"
-                type="checkbox"
-                id="repeat-th-1"
-                name="repeat"
-                value="th"
-              />
-              <label class="card__repeat-day" for="repeat-th-1"
-                >th</label
-              >
-              <input
-                class="visually-hidden card__repeat-day-input"
-                type="checkbox"
-                id="repeat-fr-1"
-                name="repeat"
-                value="fr"
-                checked
-              />
-              <label class="card__repeat-day" for="repeat-fr-1"
-                >fr</label
-              >
-              <input
-                class="visually-hidden card__repeat-day-input"
-                type="checkbox"
-                name="repeat"
-                value="sa"
-                id="repeat-sa-1"
-              />
-              <label class="card__repeat-day" for="repeat-sa-1"
-                >sa</label
-              >
-              <input
-                class="visually-hidden card__repeat-day-input"
-                type="checkbox"
-                id="repeat-su-1"
-                name="repeat"
-                value="su"
-                checked
-              />
-              <label class="card__repeat-day" for="repeat-su-1"
-                >su</label
-              >
+              ${getRepeatingDaysLayout(Array.from(repeatingDays))}
             </div>
           </fieldset>
         </div>
 
         <div class="card__hashtag">
-          <div class="card__hashtag-list"></div>
+          <div class="card__hashtag-list">
+            ${getHashTagsLayout(Array.from(tags))}
+          </div>
 
           <label>
             <input
@@ -149,62 +125,66 @@ export const getFormLayout = () => `
         <div class="card__colors-wrap">
           <input
             type="radio"
-            id="color-black-1"
+            id="color-black-4"
             class="card__color-input card__color-input--black visually-hidden"
             name="color"
             value="black"
-            checked
+            ${color === `black` ? `checked` : ``}
           />
           <label
-            for="color-black-1"
+            for="color-black-4"
             class="card__color card__color--black"
             >black</label
           >
           <input
             type="radio"
-            id="color-yellow-1"
+            id="color-yellow-4"
             class="card__color-input card__color-input--yellow visually-hidden"
             name="color"
             value="yellow"
+            ${color === `yellow` ? `checked` : ``}
           />
           <label
-            for="color-yellow-1"
+            for="color-yellow-4"
             class="card__color card__color--yellow"
             >yellow</label
           >
           <input
             type="radio"
-            id="color-blue-1"
+            id="color-blue-4"
             class="card__color-input card__color-input--blue visually-hidden"
             name="color"
             value="blue"
+            ${color === `blue` ? `checked` : ``}
           />
           <label
-            for="color-blue-1"
+            for="color-blue-4"
             class="card__color card__color--blue"
             >blue</label
           >
           <input
             type="radio"
-            id="color-green-1"
+            id="color-green-4"
             class="card__color-input card__color-input--green visually-hidden"
             name="color"
             value="green"
+            ${color === `green` ? `checked` : ``}
           />
           <label
-            for="color-green-1"
+            for="color-green-4"
             class="card__color card__color--green"
             >green</label
           >
           <input
             type="radio"
-            id="color-pink-1"
+            id="color-pink-4"
             class="card__color-input card__color-input--pink visually-hidden"
             name="color"
             value="pink"
+            ${color === `pink` ? `checked` : ``}
           />
           <label
-            for="color-pink-1"
+            for="color-pink-4"
             class="card__color card__color--pink"
             >pink</label
           >
@@ -218,6 +198,7 @@ export const getFormLayout = () => `
     </div>
   </div>
 </form>
+</article>
   `;
 
 // EOF
