@@ -1,4 +1,9 @@
+let idIincrement = 0;
+
+import {COLORS} from "./utils";
+
 export const getTask = () => ({
+  id: idIincrement++,
   description: [`Prepare for the pitch`, `Find money for travel`, `Eat something`][
     Math.floor(Math.random() * 3)
   ],
@@ -13,7 +18,7 @@ export const getTask = () => ({
     sa: false,
     su: false
   },
-  color: [`black`, `yellow`, `blue`, `green`, `pink`][Math.floor(Math.random() * 5)],
+  color: COLORS[Math.floor(Math.random() * 5)],
   isFavorite: [true, false][Math.floor(Math.random() * 2)]
 });
 
@@ -24,9 +29,7 @@ export const getFilter = (tasksArray) => [
   },
   {
     title: `Overdue`,
-    count: tasksArray.filter(({dueDate}) => {
-      return Date.now() > dueDate;
-    }).length
+    count: tasksArray.filter(({dueDate}) => Date.now() > dueDate).length
   },
   {
     title: `Today`,
@@ -38,21 +41,15 @@ export const getFilter = (tasksArray) => [
   },
   {
     title: `Favorites`,
-    count: tasksArray.filter(({isFavorite}) => {
-      return isFavorite;
-    }).length
+    count: tasksArray.filter(({isFavorite}) => isFavorite).length
   },
   {
     title: `Repeating`,
-    count: tasksArray.filter(({repeatingDays}) => {
-      return Object.values(repeatingDays).includes(true);
-    }).length
+    count: tasksArray.filter(({repeatingDays}) => Object.values(repeatingDays).includes(true)).length
   },
   {
     title: `Tags`,
-    count: tasksArray.filter(({tags}) => {
-      return tags.size > 0;
-    }).length
+    count: tasksArray.filter(({tags}) => tags.size > 0).length
   },
   {
     title: `Archive`,

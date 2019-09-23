@@ -1,20 +1,20 @@
-import {getCardDate, getCardTime} from "./utils";
+import {getCardDate, getCardTime, COLORS} from "./utils";
 
-const getRepeatingDaysLayout = (repeatingDays) => {
-  return repeatingDays
+const getRepeatingDaysLayout = (repeatingDays, id) => {
+  return Object.keys(repeatingDays)
     .map((day) =>
       `<input
         class="visually-hidden card__repeat-day-input"
         type="checkbox"
-        id="repeat-${Object.keys(day)[0]}-4"
+        id="repeat-${day}-${id}"
         name="repeat"
-        value="${Object.keys(day)[0]}"
-        ${Object.values(day) ? `checked` : ``}
+        value="${day}"
+        ${repeatingDays[day] ? `checked` : ``}
       />
       <label
         class="card__repeat-day"
-        for="repeat-${Object.keys(day)[0]}-4">
-        ${Object.keys(day)[0]}
+        for="repeat-${day}-${id}">
+        ${day}
       </label>`
     )
     .join(``);
@@ -39,7 +39,26 @@ const getHashTagsLayout = (tagsArray) => {
   .join(``);
 };
 
-export const getFormLayout = ({description, dueDate, repeatingDays, tags, color}) =>
+const getColorPickerLayout = (activeColor, id) => {
+  return COLORS.map((color) => {
+    return `
+    <input
+      type="radio"
+      id="color-${color}-${id}"
+      class="card__color-input card__color-input--${color} visually-hidden"
+      name="color"
+      value="${color}"
+      ${color === activeColor ? `checked` : ``}
+    />
+    <label
+      for="color-${color}-${id}"
+      class="card__color card__color--${color}"
+      >${color}</label
+    >`;
+  }).join(``);
+};
+
+export const getFormLayout = ({description, dueDate, repeatingDays, tags, color, id}) =>
   `
 <article class="card card--edit card--${color} ${
   Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? `card--repeat` : ``
@@ -99,7 +118,7 @@ export const getFormLayout = ({description, dueDate, repeatingDays, tags, color}
 
           <fieldset class="card__repeat-days">
             <div class="card__repeat-days-inner">
-              ${getRepeatingDaysLayout(Array.from(repeatingDays))}
+              ${getRepeatingDaysLayout(repeatingDays, id)}
             </div>
           </fieldset>
         </div>
@@ -123,71 +142,7 @@ export const getFormLayout = ({description, dueDate, repeatingDays, tags, color}
       <div class="card__colors-inner">
         <h3 class="card__colors-title">Color</h3>
         <div class="card__colors-wrap">
-          <input
-            type="radio"
-            id="color-black-4"
-            class="card__color-input card__color-input--black visually-hidden"
-            name="color"
-            value="black"
-            ${color === `black` ? `checked` : ``}
-          />
-          <label
-            for="color-black-4"
-            class="card__color card__color--black"
-            >black</label
-          >
-          <input
-            type="radio"
-            id="color-yellow-4"
-            class="card__color-input card__color-input--yellow visually-hidden"
-            name="color"
-            value="yellow"
-            ${color === `yellow` ? `checked` : ``}
-          />
-          <label
-            for="color-yellow-4"
-            class="card__color card__color--yellow"
-            >yellow</label
-          >
-          <input
-            type="radio"
-            id="color-blue-4"
-            class="card__color-input card__color-input--blue visually-hidden"
-            name="color"
-            value="blue"
-            ${color === `blue` ? `checked` : ``}
-          />
-          <label
-            for="color-blue-4"
-            class="card__color card__color--blue"
-            >blue</label
-          >
-          <input
-            type="radio"
-            id="color-green-4"
-            class="card__color-input card__color-input--green visually-hidden"
-            name="color"
-            value="green"
-            ${color === `green` ? `checked` : ``}
-          />
-          <label
-            for="color-green-4"
-            class="card__color card__color--green"
-            >green</label
-          >
-          <input
-            type="radio"
-            id="color-pink-4"
-            class="card__color-input card__color-input--pink visually-hidden"
-            name="color"
-            value="pink"
-            ${color === `pink` ? `checked` : ``}
-          />
-          <label
-            for="color-pink-4"
-            class="card__color card__color--pink"
-            >pink</label
-          >
+          ${getColorPickerLayout(color, id)}
         </div>
       </div>
     </div>
