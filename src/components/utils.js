@@ -15,13 +15,13 @@ const MONTHS = [
 
 export const COLORS = [`black`, `yellow`, `blue`, `green`, `pink`];
 
-export const getCardDate = (value) => {
-  let date = new Date(value);
+export const getCardDate = (timestamp) => {
+  let date = new Date(timestamp);
   return date.getDate() + ` ` + MONTHS[date.getMonth()];
 };
 
-export const getCardTime = (value) => {
-  const time = new Date(value);
+export const getCardTime = (timestamp) => {
+  const time = new Date(timestamp);
   const hours = time.getHours();
   const minutes = time.getMinutes();
   return hours < 13 ? hours + `:` + minutes + ` AM` : (hours % 12) + `:` + minutes + ` PM`;
